@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	utils "github.com/sashabaranov/go-openai/internal"
+	utils "github.com/AyushSawant18588/go-openai/internal"
 )
 
 // Client is OpenAI GPT-3 API client.
@@ -242,12 +242,17 @@ func (c *Client) fullURL(suffix string, args ...any) string {
 }
 
 func (c *Client) handleErrorResp(resp *http.Response) error {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("error, reading response body: %w", err)
+	}
 	var errRes ErrorResponse
-	err := json.NewDecoder(resp.Body).Decode(&errRes)
+	err = json.Unmarshal(body, &errRes)
 	if err != nil || errRes.Error == nil {
 		reqErr := &RequestError{
 			HTTPStatusCode: resp.StatusCode,
 			Err:            err,
+			Body:           body,
 		}
 		if errRes.Error != nil {
 			reqErr.Err = errRes.Error

@@ -1,4 +1,4 @@
-//go:build integration
+// go:build integration
 
 package openai_test
 
@@ -9,9 +9,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sashabaranov/go-openai"
-	"github.com/sashabaranov/go-openai/internal/test/checks"
-	"github.com/sashabaranov/go-openai/jsonschema"
+	"github.com/AyushSawant18588/go-openai"
+	"github.com/AyushSawant18588/go-openai/internal/test/checks"
+	"github.com/AyushSawant18588/go-openai/jsonschema"
 )
 
 func TestAPI(t *testing.T) {
