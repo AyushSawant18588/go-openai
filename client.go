@@ -83,6 +83,25 @@ func withBody(body any) requestOption {
 		args.body = body
 	}
 }
+func withExtraBody(extraBody map[string]any) requestOption {
+	return func(args *requestOptions) {
+		// Initialize args.body as a map[string]any if it's nil.
+		if args.body == nil {
+			args.body = make(map[string]any)
+		}
+		// Assert that args.body is a map[string]any.
+		bodyMap, ok := args.body.(map[string]any)
+		if !ok {
+			// If it's not, initialize it as a map[string]any.
+			bodyMap = make(map[string]any)
+			args.body = bodyMap
+		}
+		// Add extraBody fields to args.body.
+		for key, value := range extraBody {
+			bodyMap[key] = value
+		}
+	}
+}
 
 func withContentType(contentType string) requestOption {
 	return func(args *requestOptions) {
