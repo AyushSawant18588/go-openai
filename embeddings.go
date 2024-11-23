@@ -247,13 +247,18 @@ func (c *Client) CreateEmbeddings(
 ) (res EmbeddingResponse, err error) {
 	baseReq := conv.Convert()
 
-	// Prepare the body with the base request fields.
-	body := EmbeddingRequest{
-		Input:          baseReq.Input,
-		Model:          baseReq.Model,
-		User:           baseReq.User,
-		EncodingFormat: baseReq.EncodingFormat,
-		Dimensions:     baseReq.Dimensions,
+	// Prepare the body with only the provided fields.
+	body := make(map[string]any)
+	body["input"] = baseReq.Input
+	body["model"] = baseReq.Model
+	if baseReq.User != "" {
+		body["user"] = baseReq.User
+	}
+	if baseReq.EncodingFormat != "" {
+		body["encoding_format"] = baseReq.EncodingFormat
+	}
+	if baseReq.Dimensions > 0 { // Assuming 0 means the field is not set
+		body["dimensions"] = baseReq.Dimensions
 	}
 	req, err := c.newRequest(
 		ctx,
