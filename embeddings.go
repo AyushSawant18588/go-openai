@@ -187,7 +187,8 @@ type EmbeddingRequestStrings struct {
 	EncodingFormat EmbeddingEncodingFormat `json:"encoding_format,omitempty"`
 	// Dimensions The number of dimensions the resulting output embeddings should have.
 	// Only supported in text-embedding-3 and later models.
-	Dimensions int `json:"dimensions,omitempty"`
+	Dimensions int            `json:"dimensions,omitempty"`
+	ExtraBody  map[string]any `json:"extra_body,omitempty"`
 }
 
 func (r EmbeddingRequestStrings) Convert() EmbeddingRequest {
@@ -197,6 +198,7 @@ func (r EmbeddingRequestStrings) Convert() EmbeddingRequest {
 		User:           r.User,
 		EncodingFormat: r.EncodingFormat,
 		Dimensions:     r.Dimensions,
+		ExtraBody:      r.ExtraBody,
 	}
 }
 
@@ -219,7 +221,8 @@ type EmbeddingRequestTokens struct {
 	EncodingFormat EmbeddingEncodingFormat `json:"encoding_format,omitempty"`
 	// Dimensions The number of dimensions the resulting output embeddings should have.
 	// Only supported in text-embedding-3 and later models.
-	Dimensions int `json:"dimensions,omitempty"`
+	Dimensions int            `json:"dimensions,omitempty"`
+	ExtraBody  map[string]any `json:"extra_body,omitempty"`
 }
 
 func (r EmbeddingRequestTokens) Convert() EmbeddingRequest {
@@ -229,6 +232,7 @@ func (r EmbeddingRequestTokens) Convert() EmbeddingRequest {
 		User:           r.User,
 		EncodingFormat: r.EncodingFormat,
 		Dimensions:     r.Dimensions,
+		ExtraBody:      r.ExtraBody,
 	}
 }
 
@@ -244,18 +248,18 @@ func (c *Client) CreateEmbeddings(
 	baseReq := conv.Convert()
 
 	// Prepare the body with the base request fields.
-	body := map[string]any{
-		"input":           baseReq.Input,
-		"model":           baseReq.Model,
-		"user":            baseReq.User,
-		"encoding_format": baseReq.EncodingFormat,
-		"dimensions":      baseReq.Dimensions,
+	body := EmbeddingRequest{
+		Input:          baseReq.Input,
+		Model:          baseReq.Model,
+		User:           baseReq.User,
+		EncodingFormat: baseReq.EncodingFormat,
+		Dimensions:     baseReq.Dimensions,
 	}
 	req, err := c.newRequest(
 		ctx,
 		http.MethodPost,
 		c.fullURL("/embeddings", withModel(string(baseReq.Model))),
-		withBody(body), // Main request body.
+		withBody(body),                   // Main request body.
 		withExtraBody(baseReq.ExtraBody), // Merge ExtraBody fields.
 	)
 	if err != nil {
