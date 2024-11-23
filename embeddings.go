@@ -160,6 +160,8 @@ type EmbeddingRequest struct {
 	// Dimensions The number of dimensions the resulting output embeddings should have.
 	// Only supported in text-embedding-3 and later models.
 	Dimensions int            `json:"dimensions,omitempty"`
+	// The ExtraBody field allows for the inclusion of arbitrary key-value pairs
+	// in the request body that may not be explicitly defined in this struct.
 	ExtraBody  map[string]any `json:"extra_body,omitempty"`
 }
 
@@ -188,6 +190,8 @@ type EmbeddingRequestStrings struct {
 	// Dimensions The number of dimensions the resulting output embeddings should have.
 	// Only supported in text-embedding-3 and later models.
 	Dimensions int            `json:"dimensions,omitempty"`
+	// The ExtraBody field allows for the inclusion of arbitrary key-value pairs
+	// in the request body that may not be explicitly defined in this struct.
 	ExtraBody  map[string]any `json:"extra_body,omitempty"`
 }
 
@@ -222,6 +226,8 @@ type EmbeddingRequestTokens struct {
 	// Dimensions The number of dimensions the resulting output embeddings should have.
 	// Only supported in text-embedding-3 and later models.
 	Dimensions int            `json:"dimensions,omitempty"`
+	// The ExtraBody field allows for the inclusion of arbitrary key-value pairs
+	// in the request body that may not be explicitly defined in this struct.
 	ExtraBody  map[string]any `json:"extra_body,omitempty"`
 }
 
@@ -248,6 +254,9 @@ func (c *Client) CreateEmbeddings(
 	baseReq := conv.Convert()
 
 	// Prepare the body with only the provided fields.
+	// The body map is used to dynamically construct the request payload for the embedding API. 
+	// Instead of relying on a fixed struct, the body map allows for flexible inclusion of fields 
+	// based on their presence, avoiding unnecessary or empty fields in the request.
 	body := make(map[string]any)
 	body["input"] = baseReq.Input
 	body["model"] = baseReq.Model
