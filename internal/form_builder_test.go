@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/sashabaranov/go-openai/internal/test/checks"
+	"github.com/AyushSawant18588/go-openai/internal/test/checks"
 
 	"bytes"
 	"os"
