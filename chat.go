@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+
+	"github.com/AyushSawant18588/go-openai/jsonschema"
 )
 
 // Chat message role defined by the OpenAI API.
@@ -224,6 +226,28 @@ type ChatCompletionResponseFormatJSONSchema struct {
 	Description string     `json:"description,omitempty"`
 	Schema      JSONSchema `json:"schema"`
 	Strict      bool       `json:"strict"`
+}
+
+func (c *ChatCompletionResponseFormatJSONSchema) UnmarshalJSON(data []byte) error {
+	type Alias ChatCompletionResponseFormatJSONSchema
+	aux := &struct {
+		Schema json.RawMessage `json:"schema"`
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Create a jsonschema.Definition for the Schema field
+	var schemaDef jsonschema.Definition
+	if err := json.Unmarshal(aux.Schema, &schemaDef); err != nil {
+		return err
+	}
+	c.Schema = &schemaDef
+
+	return nil
 }
 
 // ChatCompletionRequest represents a request structure for chat completion API.
