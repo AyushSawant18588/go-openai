@@ -216,37 +216,35 @@ type ChatCompletionResponseFormat struct {
 	JSONSchema *ChatCompletionResponseFormatJSONSchema `json:"json_schema,omitempty"`
 }
 
-type JSONSchema interface {
-	json.Marshaler
-	json.Unmarshaler
-}
-
 type ChatCompletionResponseFormatJSONSchema struct {
-	Name        string     `json:"name"`
-	Description string     `json:"description,omitempty"`
-	Schema      JSONSchema `json:"schema"`
-	Strict      bool       `json:"strict"`
+	Name        string         `json:"name"`
+	Description string         `json:"description,omitempty"`
+	Schema      json.Marshaler `json:"schema"`
+	Strict      bool           `json:"strict"`
 }
 
-func (c *ChatCompletionResponseFormatJSONSchema) UnmarshalJSON(data []byte) error {
-	type Alias ChatCompletionResponseFormatJSONSchema
-	aux := &struct {
-		Schema json.RawMessage `json:"schema"`
-		*Alias
-	}{
-		Alias: (*Alias)(c),
+func (r *ChatCompletionResponseFormatJSONSchema) UnmarshalJSON(data []byte) error {
+	type rawJSONSchema struct {
+		Name        string          `json:"name"`
+		Description string          `json:"description,omitempty"`
+		Schema      json.RawMessage `json:"schema"`
+		Strict      bool            `json:"strict"`
 	}
-	if err := json.Unmarshal(data, &aux); err != nil {
+	var raw rawJSONSchema
+	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
-
-	// Create a jsonschema.Definition for the Schema field
-	var schemaDef jsonschema.Definition
-	if err := json.Unmarshal(aux.Schema, &schemaDef); err != nil {
-		return err
+	r.Name = raw.Name
+	r.Description = raw.Description
+	r.Strict = raw.Strict
+	if len(raw.Schema) > 0 && string(raw.Schema) != "null" {
+		var d jsonschema.Definition
+		err := json.Unmarshal(raw.Schema, &d)
+		if err != nil {
+			return err
+		}
+		r.Schema = &d
 	}
-	c.Schema = &schemaDef
-
 	return nil
 }
 
