@@ -307,6 +307,8 @@ type ChatCompletionRequest struct {
 	// Such as think mode for qwen3. "chat_template_kwargs": {"enable_thinking": false}
 	// https://qwen.readthedocs.io/en/latest/deployment/vllm.html#thinking-non-thinking-modes
 	ChatTemplateKwargs map[string]any `json:"chat_template_kwargs,omitempty"`
+	// GuidedChoice restricts output to a set of predefined choices.
+	GuidedChoice []string `json:"guided_choice,omitempty"`
 }
 
 type StreamOptions struct {
