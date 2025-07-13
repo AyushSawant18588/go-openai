@@ -248,6 +248,12 @@ func (r *ChatCompletionResponseFormatJSONSchema) UnmarshalJSON(data []byte) erro
 	return nil
 }
 
+// NonOpenAIExtensions contains non-standard OpenAI API extensions
+type NonOpenAIExtensions struct {
+	// GuidedChoice restricts output to a set of predefined choices.
+	GuidedChoice []string `json:"guided_choice,omitempty"`
+}
+
 // ChatCompletionRequest represents a request structure for chat completion API.
 type ChatCompletionRequest struct {
 	Model    string                  `json:"model"`
@@ -307,8 +313,8 @@ type ChatCompletionRequest struct {
 	// Such as think mode for qwen3. "chat_template_kwargs": {"enable_thinking": false}
 	// https://qwen.readthedocs.io/en/latest/deployment/vllm.html#thinking-non-thinking-modes
 	ChatTemplateKwargs map[string]any `json:"chat_template_kwargs,omitempty"`
-	// GuidedChoice restricts output to a set of predefined choices.
-	GuidedChoice []string `json:"guided_choice,omitempty"`
+	// Embedded struct for non-OpenAI extensions
+	NonOpenAIExtensions `json:",inline"`
 }
 
 type StreamOptions struct {
