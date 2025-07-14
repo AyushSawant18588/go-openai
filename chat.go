@@ -314,7 +314,7 @@ type ChatCompletionRequest struct {
 	// https://qwen.readthedocs.io/en/latest/deployment/vllm.html#thinking-non-thinking-modes
 	ChatTemplateKwargs map[string]any `json:"chat_template_kwargs,omitempty"`
 	// Embedded struct for non-OpenAI extensions
-	NonOpenAIExtensions `json:",inline"`
+	NonOpenAIExtensions
 }
 
 type StreamOptions struct {
